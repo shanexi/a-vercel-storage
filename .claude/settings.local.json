@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npm install)",
+      "Bash(npx vercel --yes)",
+      "Bash(npx vercel login)",
+      "Bash(npx vercel)",
+      "Bash(npx vercel --prod)",
+      "Bash(git init)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
