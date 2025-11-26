@@ -7,22 +7,58 @@ export const config = {
   },
 };
 
+// 根据 MIME 类型获取文件扩展名
+function getExtensionFromMimeType(mimeType) {
+  const mimeMap = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'image/svg+xml': '.svg',
+    'application/pdf': '.pdf',
+    'application/json': '.json',
+    'text/plain': '.txt',
+    'text/html': '.html',
+    'text/css': '.css',
+    'text/javascript': '.js',
+    'application/zip': '.zip',
+    'video/mp4': '.mp4',
+    'audio/mpeg': '.mp3',
+  };
+
+  return mimeMap[mimeType.toLowerCase()] || '';
+}
+
 export default async function handler(req, res) {
+  // 设置 CORS 头部
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // 处理 OPTIONS 预检请求
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // 只允许 POST 请求
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // 从查询参数获取文件名
-    const filename = req.query.filename;
+    // 获取 Content-Type
+    const contentType = req.headers['content-type'] || 'application/octet-stream';
+
+    // 从查询参数获取文件名，如果没有则自动生成
+    let filename = req.query.filename;
 
     if (!filename) {
-      return res.status(400).json({ error: 'Missing filename parameter' });
+      // 自动生成文件名：时间戳 + 扩展名
+      const timestamp = Date.now();
+      const ext = getExtensionFromMimeType(contentType);
+      filename = `upload-${timestamp}${ext}`;
     }
-
-    // 获取 Content-Type，如果没有则尝试从文件名推断
-    const contentType = req.headers['content-type'] || 'application/octet-stream';
 
     // 直接使用 req 作为流传给 put 方法
     // Vercel Blob 的 put 方法支持 Request 对象

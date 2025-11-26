@@ -8,7 +8,18 @@
       "Bash(npx vercel login)",
       "Bash(npx vercel)",
       "Bash(npx vercel --prod)",
-      "Bash(git init)"
+      "Bash(git init)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: Vercel Blob upload API\n\n- Simple serverless function for uploading files to Vercel Blob Storage\n- Support binary file uploads (images, PDFs, etc)\n- Automatic Content-Type detection\n- Returns public URL and download URL\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(gh repo create a-vercel-storage --public --source=. --remote=origin --push)",
+      "Bash(git remote add origin git@github.com:shanexi/a-vercel-storage.git)",
+      "Bash(git branch -M main)",
+      "Bash(git push -u origin main)",
+      "Bash(brew install gh)",
+      "Bash(gh auth status)",
+      "Bash(git remote remove origin)",
+      "Bash(git add .)",
+      "Bash(git commit -m \"feat: add optional filename and CORS support\n\n- Make filename parameter optional (auto-generate if not provided)\n- Add automatic file extension detection based on Content-Type\n- Add CORS headers for cross-origin requests\n- Update README with new features and examples\")",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []

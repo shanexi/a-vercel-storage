@@ -62,7 +62,12 @@ POST https://your-app.vercel.app/api/upload?filename=myfile.pdf
 ### 请求参数
 
 - **Query 参数**：
-  - `filename` (必需): 文件名，例如 `documents/report.pdf`
+  - `filename` (可选): 文件名，例如 `documents/report.pdf`
+    - 如果不提供，会自动生成文件名：`upload-{timestamp}{ext}`
+    - 扩展名根据 Content-Type 自动添加
+
+- **Headers**：
+  - `Content-Type`: 文件的 MIME 类型（如 `image/jpeg`, `application/pdf`）
 
 - **Body**：二进制文件内容
 
@@ -92,9 +97,12 @@ POST https://your-app.vercel.app/api/upload?filename=myfile.pdf
 ### HTTP Request Node 配置
 
 1. **Method**: `POST`
-2. **URL**: `https://your-app.vercel.app/api/upload?filename=myfile.pdf`
-3. **Body Content Type**: `Binary`
-4. **Binary Property**: `data` (或你的文件数据字段名)
+2. **URL**:
+   - 带文件名: `https://your-app.vercel.app/api/upload?filename=myfile.pdf`
+   - 自动生成: `https://your-app.vercel.app/api/upload`
+3. **Headers**: 添加 `Content-Type` (如 `image/jpeg`)
+4. **Body Content Type**: `Binary`
+5. **Binary Property**: `data` (或你的文件数据字段名)
 
 ### 示例工作流
 
@@ -113,30 +121,52 @@ POST https://your-app.vercel.app/api/upload?filename=myfile.pdf
 https://your-app.vercel.app/api/upload?filename={{ $json.filename }}
 ```
 
+自动生成文件名（更简单）：
+```
+https://your-app.vercel.app/api/upload
+```
+
 ## 功能特性
 
 - ✅ 支持最大 5MB 文件上传
+- ✅ **文件名可选**：不提供自动生成，提供则使用自定义名称
 - ✅ 自动添加随机后缀防止文件名冲突
-- ✅ 自动检测文件类型
+- ✅ 根据 Content-Type 自动检测文件扩展名
+- ✅ 正确的 Content-Type 存储（图片在浏览器中直接显示）
+- ✅ **CORS 支持**：可从任何来源跨域调用
 - ✅ 返回公开访问 URL 和下载 URL
 - ✅ 极简代码，易于维护
 
 ## 测试上传
 
-使用 curl 测试：
+### 方式 1：自动生成文件名
 
 ```bash
+# 上传文本
+curl -X POST \
+  "https://your-app.vercel.app/api/upload" \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello World"
+
+# 上传图片
+curl -X POST \
+  "https://your-app.vercel.app/api/upload" \
+  -H "Content-Type: image/jpeg" \
+  --data-binary @./local-image.jpg
+```
+
+### 方式 2：自定义文件名
+
+```bash
+# 上传文本
 curl -X POST \
   "https://your-app.vercel.app/api/upload?filename=test.txt" \
   -H "Content-Type: text/plain" \
   --data-binary "Hello World"
-```
 
-使用本地文件：
-
-```bash
+# 上传图片
 curl -X POST \
-  "https://your-app.vercel.app/api/upload?filename=image.jpg" \
+  "https://your-app.vercel.app/api/upload?filename=my-photo.jpg" \
   -H "Content-Type: image/jpeg" \
   --data-binary @./local-image.jpg
 ```
